@@ -15,6 +15,8 @@
     "firebase-scrypt": "^2.1.0",
     "moment": "^2.29.1",
     "pg": "^8.7.1",
-    "stream-json": "^1.7.3"
+    "stream-json": "^1.7.3",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
   }
 }
