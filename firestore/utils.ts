@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import * as fs from 'fs';
+import * as fs from "fs";
 
 const serviceAccount = require("./firebase-service.json");
 
@@ -8,7 +8,7 @@ const serviceAccount = require("./firebase-service.json");
 try {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: `https://${serviceAccount.project_id}.firebaseio.com` // "https://PROJECTID.firebaseio.com"
+    databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`, // "https://PROJECTID.firebaseio.com"
   });
 } catch (e) {}
 
@@ -19,7 +19,7 @@ function getFirestoreInstance(): admin.firestore.Firestore {
 }
 
 function removeEmptyFields(obj: any) {
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     if (obj[key] && typeof obj[key] === "object") {
       removeEmptyFields(obj[key]);
     } else if (obj[key] === null || obj[key] === "" || obj[key] === " ") {
@@ -27,26 +27,42 @@ function removeEmptyFields(obj: any) {
     }
   });
 }
- 
-const cleanUp = (recordCounters: any ) => {
+
+const cleanUp = (recordCounters: any) => {
   for (let key in recordCounters) {
-    fs.appendFileSync(`./${key}.json`, 
-    '\n]', 
-    'utf8');      
+    fs.appendFileSync(`./${key}.json`, "\n]", "utf8");
   }
-}
+};
+const basePath = "./export/";
+
 const writeRecord = (name: string, doc: any, recordCounters: any) => {
   if (!recordCounters[name] || recordCounters[name] === 0) {
-    fs.writeFileSync(`./${name}.json`, 
-    '[\n', 
-    'utf8');
-    recordCounters[name] = 0;   
+    fs.writeFileSync(basePath + `${name}.json`, "[\n", "utf8");
+    recordCounters[name] = 0;
   }
-  fs.appendFileSync(`./${name}.json`, 
-      (recordCounters[name] > 0 ? ',\n' : '') + JSON.stringify(doc, null, 2), 
-  'utf8');
+  fs.appendFileSync(
+    basePath + `${name}.json`,
+    (recordCounters[name] > 0 ? ",\n" : "") + JSON.stringify(doc, null, 2),
+    "utf8"
+  );
   recordCounters[name]++;
-}
+};
 
+const listCollections = async (): Promise<string[]> => {
+  try {
+    const collections = await db.listCollections();
+    const collectionIds = collections.map((collection) => collection.id);
+    return collectionIds;
+  } catch (err) {
+    console.error("ERROR", err);
+    throw err;
+  }
+};
 
-export { removeEmptyFields, getFirestoreInstance, cleanUp, writeRecord };
+export {
+  removeEmptyFields,
+  getFirestoreInstance,
+  cleanUp,
+  writeRecord,
+  listCollections,
+};

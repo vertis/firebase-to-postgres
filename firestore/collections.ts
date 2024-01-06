@@ -1,4 +1,4 @@
-import { getFirestoreInstance } from './utils';
+import { getFirestoreInstance, listCollections } from "./utils";
 // import * as admin from "firebase-admin";
 // import { DataSnapshot, Query } from '@firebase/database-types';
 // import * as fs from 'fs';
@@ -6,17 +6,8 @@ import { getFirestoreInstance } from './utils';
 const db = getFirestoreInstance();
 
 async function main() {
-    await db.listCollections()
-        .then(snapshot => {
-            snapshot.forEach(snaps => {
-                // console.log(snaps["_queryOptions"].collectionId); // LIST OF ALL COLLECTIONS
-                console.log(snaps["_queryOptions"].collectionId);
-            })
-        })
-        .catch(err => console.log('ERROR', err));
+  const collections = await listCollections();
+  console.log(collections);
 }
+
 main();
-
-
-
-
