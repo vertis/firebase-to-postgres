@@ -9,3 +9,4 @@ __*
 fly.toml
 local.env.sh
 
+export
