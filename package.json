@@ -13,6 +13,7 @@
     "@supabase/supabase-js": "^1.30.7",
     "firebase-admin": "^10.0.2",
     "firebase-scrypt": "^2.1.0",
+    "ioredis": "^5.3.2",
     "moment": "^2.29.1",
     "pg": "^8.7.1",
     "ramda": "^0.29.1",
