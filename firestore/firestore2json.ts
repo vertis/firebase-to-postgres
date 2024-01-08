@@ -7,16 +7,6 @@ import {
 import * as fs from "fs";
 const args = process.argv.slice(2);
 
-// let processDocument;
-// if (fs.existsSync(`./firestore/${args[0]}.ts`)) {
-//   // read file to string
-//   processDocument = require(`./${args[0]}.ts`).default;
-//   console.log(processDocument);
-// } else {
-//   console.log("No processDocument file found for collection: " + args[0]);
-//   //   process.exit(1);
-// }
-
 let db;
 
 const recordCounters = {};

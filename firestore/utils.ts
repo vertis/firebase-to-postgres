@@ -59,10 +59,49 @@ const listCollections = async (): Promise<string[]> => {
   }
 };
 
+const listCollectionsWithSubCollections = async () => {
+  console.log("Listing all collections with subcollections");
+  const collectionNames = await listCollections();
+  console.log(`Found top-level collections: ${collectionNames}`);
+  const allCollections = new Set();
+  const processSubCollections = async (collection) => {
+    const docs = await db.collection(collection).limit(5).get();
+    console.log(`Documents in ${collection}: ${docs.docs.length}`);
+
+    if (docs.docs.length > 0) {
+      const doc = docs.docs[0];
+      console.log(`Processing first document: ${doc.ref.path}`);
+      const docRef = doc.ref;
+      const subCollections = await docRef.listCollections();
+      if (subCollections.length > 0) {
+        console.log(
+          `Found subcollections for document ${collection} ${
+            doc.id
+          }: ${subCollections.map((sc) => sc.id)}`
+        );
+        for (const subCollection of subCollections) {
+          const subPath = `${docRef.path}/${subCollection.id}`;
+          console.log(`Adding subcollection to set: ${subPath}`);
+          allCollections.add(subPath);
+          await processSubCollections(subPath);
+        }
+      }
+    }
+  };
+  for (const collectionName of collectionNames) {
+    console.log(`Adding collection to set: ${collectionName}`);
+    allCollections.add(collectionName);
+    await processSubCollections(collectionName);
+  }
+  console.log("Completed listing of all collections with subcollections");
+  return Array.from(allCollections);
+};
+
 export {
   removeEmptyFields,
   getFirestoreInstance,
   cleanUp,
   writeRecord,
   listCollections,
+  listCollectionsWithSubCollections,
 };
